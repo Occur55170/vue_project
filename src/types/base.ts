@@ -1,23 +1,24 @@
+export enum RoleLevel {
+  ADMIN = 'ADMIN',
+  EDITOR = 'EDITOR',
+  USER = 'USER',
+  CLIENT = 'CLIENT',
+}
+
+export enum AccountStatus {
+  ON = 'ON',
+  OFF = 'OFF',
+}
+
 export interface AccountType {
   createdAt: Date
   email: string
   id: string
   name: string
-  roleLevel: string
-  status: string
+  roleLevel: RoleLevel
+  status: AccountStatus
 }
 
-export interface CreateAccountType {
-  name: string
-  email: string
-  roleLevel: string
-  status: string
-}
+export type CreateAccountType = Omit<AccountType, 'id' | 'createdAt'>
 
-export interface EditAccountType {
-  id: string
-  name: string
-  email: string
-  roleLevel: string
-  status: string
-}
+export type EditAccountType = Omit<AccountType, 'createdAt'>

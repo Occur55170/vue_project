@@ -11,16 +11,17 @@ import IconCalendar from '@/components/icons/IconCalendar.vue';
 import IconSquarePen from '@/components/icons/IconSquarePen.vue';
 import IconTrash from '@/components/icons/IconTrash.vue';
 import Lightbox from '@/components/lightbox.vue';
+import { RoleLevel, AccountStatus } from '@/types/base';
 import type { AccountType, CreateAccountType, EditAccountType } from '@/types/base';
 
 const isLightboxOpen = ref(false);
 const editingAccount = ref<AccountType | null>(null);
 const accounts = ref<AccountType[]>([]);
 const enabledAccount = computed<AccountType[]>(() => {
-    return accounts.value.filter(account => account.status === 'ON')
+    return accounts.value.filter(account => account.status === AccountStatus.ON)
 })
 const disabledAccount = computed<AccountType[]>(() => {
-    return accounts.value.filter(account => account.status === 'OFF')
+    return accounts.value.filter(account => account.status === AccountStatus.OFF)
 })
 
 async function getAccounts() {
@@ -184,8 +185,8 @@ onMounted(async () => {
                             <div>
                                 <h3 class="text-gray-900">{{ item.name }}</h3><span
                                     class="inline-block px-2 py-1 rounded-full text-white mt-1"
-                                    :class="item.status === 'ON' ? 'bg-green-500' : 'bg-red-500'">
-                                    {{ item.status === 'ON' ? '啟用' : '停用' }}
+                                    :class="item.status === AccountStatus.ON ? 'bg-green-500' : 'bg-red-500'">
+                                    {{ item.status === AccountStatus.ON ? '啟用' : '停用' }}
                                 </span>
                             </div>
                         </div>

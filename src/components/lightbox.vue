@@ -1,33 +1,45 @@
 <script lang="ts" setup>
-import { reactive, onUnmounted, computed } from 'vue';
+import { reactive, watch, computed } from 'vue';
 import IconX from '@/components/icons/IconX.vue';
+import { RoleLevel, AccountStatus } from '@/types/base';
+import type { CreateAccountType, EditAccountType } from '@/types/base';
 
 const props = defineProps<{
     modelValue: boolean;
-    initialData?: { id?: string; name: string; email: string; roleLevel: string; status: string } | null;
+    initialData?: Partial<EditAccountType> | null;
 }>();
 
 const emit = defineEmits<{
     (e: 'update:modelValue', value: boolean): void;
-    (e: 'submit', data: { name: string; email: string; roleLevel: string; status: string }): void;
-    (e: 'update-account', data: { id: string; name: string; email: string; roleLevel: string; status: string }): void;
+    (e: 'submit', data: CreateAccountType): void;
+    (e: 'update-account', data: EditAccountType): void;
 }>();
 
-const isEditing = computed(() => !!props.initialData);
+const isEditing = computed(() => !!props.initialData?.id);
 
-const formData = reactive({
-    name: props.initialData?.name || '',
-    email: props.initialData?.email || '',
-    roleLevel: props.initialData?.roleLevel || 'ADMIN',
-    status: props.initialData?.status || 'ON'
+const formData = reactive<CreateAccountType>({
+    name: '',
+    email: '',
+    roleLevel: RoleLevel.ADMIN,
+    status: AccountStatus.ON
 });
 
-onUnmounted(() => {
-    formData.name = '';
-    formData.email = '';
-    formData.roleLevel = 'ADMIN';
-    formData.status = 'ON';
-});
+watch(
+    () => props.modelValue,
+    (isOpen) => {
+        if (isOpen) {
+            formData.name = props.initialData?.name || '';
+            formData.email = props.initialData?.email || '';
+            formData.roleLevel = props.initialData?.roleLevel || RoleLevel.ADMIN;
+            formData.status = props.initialData?.status || AccountStatus.ON;
+        } else {
+            formData.name = '';
+            formData.email = '';
+            formData.roleLevel = RoleLevel.ADMIN;
+            formData.status = AccountStatus.ON;
+        }
+    }
+);
 
 const close = () => {
     emit('update:modelValue', false);
@@ -85,10 +97,10 @@ const handleSubmit = () => {
                                 <select id="role" name="role" v-model="formData.roleLevel"
                                     class="block w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition"
                                     required>
-                                    <option value="ADMIN">管理員</option>
-                                    <option value="EDITOR">編輯</option>
-                                    <option value="USER">用戶</option>
-                                    <option value="GUEST">訪客</option>
+                                    <option :value="RoleLevel.ADMIN">管理員</option>
+                                    <option :value="RoleLevel.EDITOR">編輯</option>
+                                    <option :value="RoleLevel.USER">用戶</option>
+                                    <option :value="RoleLevel.CLIENT">客戶</option>
                                 </select>
                             </div>
 
@@ -100,8 +112,8 @@ const handleSubmit = () => {
                                 <select id="status" name="status" v-model="formData.status"
                                     class="block w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition"
                                     required>
-                                    <option value="ON">啟用</option>
-                                    <option value="OFF">停用</option>
+                                    <option :value="AccountStatus.ON">啟用</option>
+                                    <option :value="AccountStatus.OFF">停用</option>
                                 </select>
                             </div>
                         </div>
