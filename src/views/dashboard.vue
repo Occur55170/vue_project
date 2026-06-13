@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { onMounted, computed, ref } from 'vue';
 import axios from 'axios';
-import account from '@/components/account.vue';
 import IconUsers from '@/components/icons/IconUsers.vue';
 import IconLogOut from '@/components/icons/IconLogOut.vue';
 import IconSearch from '@/components/icons/IconSearch.vue';
